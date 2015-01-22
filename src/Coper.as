@@ -7,7 +7,7 @@ import flash.display.StageScaleMode;
 import z_spark.necessaryrescoper.ConfigParser;
 import z_spark.necessaryrescoper.Constance;
 import z_spark.necessaryrescoper.DraggerController;
-import z_spark.necessaryrescoper.FileItemCoper;
+import z_spark.necessaryrescoper.FileCoper;
 import z_spark.necessaryrescoper.TextOutputter;
 import z_spark.necessaryrescoper.event.NRCDragEvent;
 
@@ -30,11 +30,11 @@ public class Coper extends Sprite
 		
 	}
 	
-	protected function onConfigFileGot(event:NRCDragEvent):void
+	private function onConfigFileGot(event:NRCDragEvent):void
 	{
 		var arr:Array=[];
 		new ConfigParser().parse(event.path,arr);
-		new FileItemCoper().copy(arr);
+		new FileCoper().copy(arr);
 	}
 }
 }

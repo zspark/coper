@@ -1,16 +1,15 @@
 package z_spark.necessaryrescoper
 {
-	import flash.text.ReturnKeyLabel;
 	import flash.text.TextField;
 	import flash.utils.ByteArray;
 	import flash.utils.setTimeout;
 	
 	import z_spark.necessaryrescoper.data.ConfigFileItem;
 
-	public class FileItemCoper
+	public class FileCoper
 	{
 		private var _numResCopied:uint=0;
-		public function FileItemCoper()
+		public function FileCoper()
 		{
 		}
 		
