@@ -25,7 +25,7 @@ package z_spark.necessaryrescoper
 	/**
 	 * FileNameN:file name without extension; 
 	 * FileNameE:file name with extension;
-	 * FileName:unknow has or not;
+	 * FileName:unknow has extension or not;
 	 * @author z_Spark
 	 * 
 	 */
@@ -47,7 +47,7 @@ package z_spark.necessaryrescoper
 			ConfigFileItem.totalResCount=0;
 			
 			TextOutputter.ins.warning("配置文件路径：",configFile);
-			var contentLines:Array=Utils.read(configFile).split(Constance.FILE_BREAKER);
+			var contentLines:Array=Utils.splitStringBy(Utils.read(configFile),Constance.FILE_BREAKER);
 			for each( var content:String in contentLines){
 				if(content.length==0 || content.charAt(0)==Constance.COMMET_MARK)continue;
 				if(parseURL(content))continue;
@@ -76,10 +76,18 @@ package z_spark.necessaryrescoper
 			}else{
 				//a file with/without extension;
 				if(Utils.hasSign(lastPart,Constance.MARK_DOT)){
-					item.push(lastPart);
+					checkExistAndPush(lastPart,item);
 				}else{
 					pushSameNameFilesIntoItem(lastPart,item);
 				}
+			}
+		}
+		
+		private function checkExistAndPush(fileNameE:String,item:ConfigFileItem,fixedURL:String=''):void{
+			if(Utils.exists(root+item.relativePath+fixedURL+fileNameE)){
+				item.push(fixedURL+fileNameE);
+			}else{
+				printResNotExist(item.relativePath+fixedURL+fileNameE);
 			}
 		}
 		
@@ -116,15 +124,18 @@ package z_spark.necessaryrescoper
 					}
 				}else{
 					/**
-					 * 没有统一的扩展名，有下面3种情况
+					 * 没有统一的扩展名，有下面4种情况
 					 * 001~013
 					 * 015.txt
 					 * 001
+					 * aaa\
 					 * */
 					if(Utils.hasSign(subItem,Constance.MARK_WAVE)){
 						parseRange(subItem,Constance.EXT_ALL,item);
 					}else if(Utils.hasSign(subItem,Constance.MARK_DOT)){
-						item.push(subItem);
+						checkExistAndPush(subItem,item);
+					}else if(Utils.getLastIndexOfSign(subItem,Constance.MARK_BACK_SLASH)==subItem.length-1){
+						pushDirectoryFilesIntoItem(item,Constance.EXT_ALL,subItem);
 					}else{
 						pushSameNameFilesIntoItem(subItem,item);
 					}
@@ -166,8 +177,12 @@ package z_spark.necessaryrescoper
 			}
 			
 			if(!flag){
-				TextOutputter.ins.error(item.relativePath+fileNameN,"不存在！");
+				printResNotExist(item.relativePath+fileNameN+'.'+Constance.EXT_ALL);
 			}
+		}
+		
+		private function printResNotExist(str:String):void{
+			TextOutputter.ins.error("资源不存在：",str);
 		}
 		
 		private function pushDirectoryFilesIntoItem(item:ConfigFileItem,requiredExtension:String=Constance.EXT_ALL,fixedURL:String=''):void
@@ -182,13 +197,7 @@ package z_spark.necessaryrescoper
 			var arr:Array=Utils.getDirectoryListing(dirURL);
 			for each(var file:File in arr){
 				if(file.isDirectory || file.name=="." || file.name=="..")continue;
-				else {
-					if(requiredExtension==Constance.EXT_ALL)
-						item.push(fixedURL+file.name);
-					else{
-						if(Utils.isExtensionRight(file.name,requiredExtension))item.push(fixedURL+file.name);
-					}
-				}
+				else if(Utils.isExtensionRight(file.name,requiredExtension))item.push(fixedURL+file.name);
 			}
 		}
 		
@@ -210,7 +219,7 @@ package z_spark.necessaryrescoper
 				}else if(r.extension==Constance.EXT_ALL){
 					pushSameNameFilesIntoItem(fileNameN,item);
 				}else {
-					item.push(fileNameN+'.'+r.extension);
+					checkExistAndPush(fileNameN+'.'+r.extension,item);
 				}
 				
 			}
