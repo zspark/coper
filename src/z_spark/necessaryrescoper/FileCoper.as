@@ -17,7 +17,7 @@ package z_spark.necessaryrescoper
 			//check path first
 			if(ConfigParser.root =='' || ConfigParser.target=="")
 				throw new Error("必要路径信息尚未配置，可能配置表少配，也可能程序bug，请检查！");
-				
+			
 			TextOutputter.ins.warning("开始拷贝...");
 			var tf:TextField=TextOutputter.ins.info("");
 			var _curIndex:uint=0;
@@ -42,7 +42,7 @@ package z_spark.necessaryrescoper
 		{
 			if(Utils.exists(ConfigParser.root+relativePath+fileName)){
 				_numResCopied++;
-				createDirectory(relativePath);
+				createDirectory(relativePath+fileName);
 				var barr:ByteArray=Utils.readByteArray(ConfigParser.root+relativePath+fileName);
 				Utils.writeByteArray(ConfigParser.target+relativePath+fileName,barr);
 			}else{
@@ -59,7 +59,7 @@ package z_spark.necessaryrescoper
 		{
 			var dir:String='';
 			var dirHierarchy:Array=relativePath.split(Constance.MARK_BACK_SLASH);
-			for (var i:int=0;i<dirHierarchy.length;i++){
+			for (var i:int=0;i<dirHierarchy.length-1;i++){
 				dir+=dirHierarchy[i]+Constance.MARK_BACK_SLASH;
 				if(!Utils.exists(ConfigParser.target+dir)){
 					Utils.createDirectory(ConfigParser.target+dir);

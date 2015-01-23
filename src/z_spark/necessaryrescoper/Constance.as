@@ -8,6 +8,7 @@ package z_spark.necessaryrescoper
 		public static const COMMET_MARK:String='#';
 		
 		public static const MARK_BIG_BRACKET:String='{';
+		public static const MARK_BIG_BRACKET_RIGHT:String='}';
 		public static const MARK_BACK_SLASH:String='\\';
 		public static const MARK_V_LINE:String='|';
 		public static const MARK_COLON:String=':';

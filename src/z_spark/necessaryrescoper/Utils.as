@@ -68,6 +68,29 @@ package z_spark.necessaryrescoper
 			return fileName.substr(fileName.indexOf('.')+1)===ext;
 		}
 		
+		public static const DEC_NUMBERS:String="0123456789";
+		public static function isStringAllDecNumbers(str:String):Boolean{
+			var i:int=0;
+			while(i<str.length){
+				if(DEC_NUMBERS.indexOf(str.charAt(i))>=0){
+					i++;
+					continue;
+				}else return false;
+			}
+			return true;
+		}
+		
+		public static function fixToLength(num:int,l:int):String{
+			var result:String=String(num);
+			if(result.length>l)throw new Error("试图将一个更长的数字调整为长度较短的字符串！");
+			else {
+				while(result.length<l){
+					result=0+result;
+				}
+			}
+			
+			return result;
+		}
 		
 		
 		
