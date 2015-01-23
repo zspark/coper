@@ -43,7 +43,7 @@ public class Coper extends Sprite
 		dc.addEventListener(NRCDragEvent.CONFIG_FILE_GOT,onConfigFileGot);
 		
 		new TextOutputter(stage);
-		TextOutputter.ins.custom(Constance.GRAY,"Coper is ready,Ver:1.0.0");
+		TextOutputter.ins.custom(Constance.GRAY,"Coper,Powered by z_Spark(z_spark@163.com).Ver:1.0.0");
 		TextOutputter.ins.custom(Constance.GRAY,"请将配置文件拖动到该窗口里面释放。");
 		
 	}
