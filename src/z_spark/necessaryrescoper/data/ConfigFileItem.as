@@ -20,21 +20,21 @@ package z_spark.necessaryrescoper.data
 		}
 		
 		private var _relativePath:String='';//ended with '\'
-		private var _rightConfigPart:String='';
+		private var _lastContentPart:String='';
 
 		public function get content():String
 		{
 			return _content;
 		}
 
-		public function get rightConfigPart():String
+		public function get lastContentPart():String
 		{
-			return _rightConfigPart;
+			return _lastContentPart;
 		}
 
-		public function set rightConfigPart(value:String):void
+		public function set lastContentPart(value:String):void
 		{
-			_rightConfigPart = value;
+			_lastContentPart = value;
 		}
 
 		public function get relativePath():String

@@ -9,9 +9,7 @@ package z_spark.necessaryrescoper
 	public class FileCoper
 	{
 		private var _numResCopied:uint=0;
-		public function FileCoper()
-		{
-		}
+		public function FileCoper(){}
 		
 		public function copy(itemArr:Array):void{
 			//check path first
@@ -42,29 +40,10 @@ package z_spark.necessaryrescoper
 		{
 			if(Utils.exists(ConfigParser.root+relativePath+fileName)){
 				_numResCopied++;
-				createDirectory(relativePath+fileName);
 				var barr:ByteArray=Utils.readByteArray(ConfigParser.root+relativePath+fileName);
 				Utils.writeByteArray(ConfigParser.target+relativePath+fileName,barr);
 			}else{
 				TextOutputter.ins.error("该资源不存在：",relativePath+fileName);
-			}
-		}
-		
-		/**
-		 * 在目标根目录下面创建相同的目录结构； 
-		 * @param relativePath
-		 * 
-		 */
-		private function createDirectory(relativePath:String):void
-		{
-			var dir:String='';
-			var dirHierarchy:Array=relativePath.split(Constance.MARK_BACK_SLASH);
-			for (var i:int=0;i<dirHierarchy.length-1;i++){
-				dir+=dirHierarchy[i]+Constance.MARK_BACK_SLASH;
-				if(!Utils.exists(ConfigParser.target+dir)){
-					Utils.createDirectory(ConfigParser.target+dir);
-				}
-				
 			}
 		}
 	}

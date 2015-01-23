@@ -47,84 +47,86 @@ package z_spark.necessaryrescoper
 			ConfigFileItem.totalResCount=0;
 			
 			TextOutputter.ins.warning("配置文件路径：",configFile);
-			var contentLines:Array=Utils.read(configFile).split(Constance.LINE_BREAKER);
+			var contentLines:Array=Utils.read(configFile).split(Constance.FILE_BREAKER);
 			for each( var content:String in contentLines){
-				if(content.indexOf(Constance.COMMET_MARK)>=0 || content.length==0)continue;
+				if(content.length==0 || content.charAt(0)==Constance.COMMET_MARK)continue;
 				if(parseURL(content))continue;
 				
 				var item:ConfigFileItem=new ConfigFileItem(content);
 				var a:int=getLastIndexOfBackSlash(content);
 				item.relativePath=content.substr(0,a+1);
-				item.rightConfigPart=content.substr(a+1);
+				item.lastContentPart=content.substr(a+1);
 				parseItem(item);
 				
 				itemArr.push(item);
 			}//end of for	
-			TextOutputter.ins.warning("共有条目数量：",ConfigFileItem.totalItemCount,"		共有资源数量：",ConfigFileItem.totalResCount);
+			TextOutputter.ins.warning("共有条目数量：",ConfigFileItem.totalItemCount,
+				"		共有资源数量：",ConfigFileItem.totalResCount);
 		}
 		
 		private function parseItem(item:ConfigFileItem):void
 		{
-			var right:String=item.rightConfigPart;
-			if(right==''){
-				//目录；
+			var lastPart:String=item.lastContentPart;
+			if(lastPart==''){
+				//directory；
 				pushDirectoryFilesIntoItem(item);
-			}else if(right.charAt(0)==Constance.MARK_BIG_BRACKET){
-				//有{};
+			}else if(lastPart.charAt(0)==Constance.MARK_BIG_BRACKET){
+				//has {};
 				parseContentWithBigBracket(item);
 			}else{
-				if(right.indexOf('.')>=0){
-					item.push(right);
+				//a file with/without extension;
+				if(Utils.hasSign(lastPart,Constance.MARK_DOT)){
+					item.push(lastPart);
 				}else{
-					pushSameNameFilesIntoItem(right,item);
+					pushSameNameFilesIntoItem(lastPart,item);
 				}
 			}
 		}
 		
-		private function getLastIndexOfBackSlash(raw:String):int{
+		private function getLastIndexOfBackSlash(str:String):int{
 			var i:int=0;
 			var result:int=-1;
 			var lock:Boolean=false;
 			do{
-				var char:String=raw.charAt(i);
+				var char:String=str.charAt(i);
 				if(char == Constance.MARK_BIG_BRACKET)lock=true;
 				else if(char == Constance.MARK_BIG_BRACKET_RIGHT)lock=false;
 				else if(char == Constance.MARK_BACK_SLASH && !lock)result=i;
 				i++;
-			}while(i<raw.length);
+			}while(i<str.length);
 			return result;
 		}
 		
 		private function parseContentWithBigBracket(item:ConfigFileItem):void
 		{
-			var right:String=item.rightConfigPart.substring(1,item.rightConfigPart.length-1);//delete {};
-			var arr:Array=right.split(Constance.MARK_V_LINE);
+			var lastPart:String=item.lastContentPart.substring(1,item.lastContentPart.length-1);//delete {};
+			var arr:Array=lastPart.split(Constance.MARK_V_LINE);
 			for each(var subItem:String in arr){
-				if(subItem.indexOf(Constance.MARK_COLON)==-1){
-					/**
-					 * 没有统一的扩展名，有下面3种情况
-					 * 001~013
-					 * 015.txt
-					 * 001
-					 * */
-					if(subItem.indexOf(Constance.MARK_WAVE)>=0){
-						parseRange(subItem,Constance.EXT_ALL,item);
-					}else if(subItem.indexOf(".")>=0){
-						item.push(subItem);
-					}else{
-						pushSameNameFilesIntoItem(subItem,item);
-					}
-				}else{
+				if(Utils.hasSign(subItem,Constance.MARK_COLON)){
 					/**
 					 * 有统一的扩展名，有下面2种情况
 					 * 001~013:doc		001~013:\
 					 * :png
 					 * */
 					var tmpa:Array=subItem.split(Constance.MARK_COLON);
-					if(tmpa[0].indexOf(Constance.MARK_WAVE)>=0){
+					if(Utils.hasSign(tmpa[0],Constance.MARK_WAVE)){
 						parseRange(tmpa[0],tmpa[1],item);
 					}else{
-						pushDirectoryFilesIntoItem(item,arr[1]);
+						pushDirectoryFilesIntoItem(item,tmpa[1]);
+					}
+				}else{
+					/**
+					 * 没有统一的扩展名，有下面3种情况
+					 * 001~013
+					 * 015.txt
+					 * 001
+					 * */
+					if(Utils.hasSign(subItem,Constance.MARK_WAVE)){
+						parseRange(subItem,Constance.EXT_ALL,item);
+					}else if(Utils.hasSign(subItem,Constance.MARK_DOT)){
+						item.push(subItem);
+					}else{
+						pushSameNameFilesIntoItem(subItem,item);
 					}
 				}
 			}
@@ -149,39 +151,42 @@ package z_spark.necessaryrescoper
 				TextOutputter.ins.error("目录不存在：",item.relativePath);
 				return;
 			}
+			Utils.createDirectory(target+item.relativePath);
 			
 			var flag:Boolean=false;
-			var fileInfos:Array=Utils.getDirectoryListing(root+item.relativePath);
-			for each(var file:File in fileInfos){
-				if(file.isDirectory)continue;
+			var files:Array=Utils.getDirectoryListing(root+item.relativePath);
+			for each(var file:File in files){
+				if(file.isDirectory || file.name=='.' || file.name=="..")continue;
 				else{
-					if(file.name.indexOf(fileNameN)>=0){
-						flag=true;
+					if(Utils.hasSign(file.name,fileNameN)){
 						item.push(file.name);
+						flag=true;
 					}
 				}
 			}
 			
 			if(!flag){
-				item.push(fileNameN+'.'+Constance.EXT_ALL);
+				TextOutputter.ins.error(item.relativePath+fileNameN,"不存在！");
 			}
 		}
 		
-		private function pushDirectoryFilesIntoItem(item:ConfigFileItem,requiredExtension:String=Constance.EXT_ALL,directoryURLaa:String=''):void
+		private function pushDirectoryFilesIntoItem(item:ConfigFileItem,requiredExtension:String=Constance.EXT_ALL,fixedURL:String=''):void
 		{
-			var dirURL:String=root+item.relativePath+directoryURLaa;
+			var dirURL:String=root+item.relativePath+fixedURL;
 			if(!Utils.exists(dirURL)){
-				TextOutputter.ins.error("目录不存在：",item.relativePath+directoryURLaa);
+				TextOutputter.ins.error("目录不存在：",item.relativePath+fixedURL);
 				return;
 			}
+			
+			Utils.createDirectory(target+item.relativePath+fixedURL);
 			var arr:Array=Utils.getDirectoryListing(dirURL);
 			for each(var file:File in arr){
 				if(file.isDirectory || file.name=="." || file.name=="..")continue;
 				else {
 					if(requiredExtension==Constance.EXT_ALL)
-						item.push(directoryURLaa+file.name);
+						item.push(fixedURL+file.name);
 					else{
-						if(Utils.isExtensionRight(file.name,requiredExtension))item.push(directoryURLaa+file.name);
+						if(Utils.isExtensionRight(file.name,requiredExtension))item.push(fixedURL+file.name);
 					}
 				}
 			}

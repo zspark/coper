@@ -49,7 +49,6 @@ package z_spark.necessaryrescoper
 		public static function createDirectory(directoryName:String):void{
 			var f:File=new File(directoryName);
 			f.createDirectory()
-			
 		}
 		
 		
@@ -65,7 +64,16 @@ package z_spark.necessaryrescoper
 		
 		///////////////////////////////others////////////////////////////////////
 		public static function isExtensionRight(fileName:String,ext:String):Boolean{
-			return fileName.substr(fileName.indexOf('.')+1)===ext;
+			var e:String=fileName.substr(getLastIndexOfSign(fileName,'.')+1);
+			return e===ext || e===Constance.EXT_ALL;
+		}
+		
+		public static function hasSign(str:String,sign:String):Boolean{
+			return str.indexOf(sign)>=0;
+		}
+		
+		public static function getLastIndexOfSign(str:String,sign:String):int{
+			return str.lastIndexOf(sign);
 		}
 		
 		public static const DEC_NUMBERS:String="0123456789";
@@ -88,7 +96,6 @@ package z_spark.necessaryrescoper
 					result=0+result;
 				}
 			}
-			
 			return result;
 		}
 		

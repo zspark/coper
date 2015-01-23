@@ -13,7 +13,8 @@ package z_spark.necessaryrescoper
 		public static const MARK_V_LINE:String='|';
 		public static const MARK_COLON:String=':';
 		public static const MARK_WAVE:String='~';
-		public static const LINE_BREAKER:RegExp=/\r\n|\r|\n/;
+		public static const MARK_DOT:String='.';
+		public static const FILE_BREAKER:RegExp=/\r\n|\r|\n/;
 		
 		public static const MAX_TF_COUNT:uint=500;
 		
