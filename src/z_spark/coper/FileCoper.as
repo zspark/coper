@@ -16,13 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package z_spark.necessaryrescoper
+package z_spark.coper
 {
 	import flash.text.TextField;
 	import flash.utils.ByteArray;
 	import flash.utils.setTimeout;
 	
-	import z_spark.necessaryrescoper.data.ConfigFileItem;
 
 	public class FileCoper
 	{

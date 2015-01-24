@@ -1,6 +1,4 @@
 /*
-* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
-*
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
 * arising from the use of this software.
@@ -16,7 +14,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package z_spark.necessaryrescoper
+package z_spark.coper
 {
 import flash.display.Sprite;
 import flash.display.Stage;
