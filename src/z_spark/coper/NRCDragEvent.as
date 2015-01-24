@@ -1,4 +1,4 @@
-package z_spark.necessaryrescoper.event
+package z_spark.coper
 {
 	import flash.events.Event;
 	

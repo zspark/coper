@@ -1,6 +1,4 @@
 /*
-* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
-*
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
 * arising from the use of this software.
@@ -22,12 +20,12 @@ import flash.display.Sprite;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 
-import z_spark.necessaryrescoper.ConfigParser;
-import z_spark.necessaryrescoper.Constance;
-import z_spark.necessaryrescoper.DraggerController;
-import z_spark.necessaryrescoper.FileCoper;
-import z_spark.necessaryrescoper.TextOutputter;
-import z_spark.necessaryrescoper.event.NRCDragEvent;
+import z_spark.coper.ConfigParser;
+import z_spark.coper.Constance;
+import z_spark.coper.DraggerController;
+import z_spark.coper.FileCoper;
+import z_spark.coper.TextOutputter;
+import z_spark.coper.NRCDragEvent;
 
 public class Coper extends Sprite
 {
